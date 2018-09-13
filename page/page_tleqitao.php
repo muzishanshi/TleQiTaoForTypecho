@@ -72,7 +72,6 @@ date_default_timezone_set('Asia/Shanghai');
 							</div>
 							</center>
 						</p>
-						<p style="text-align:center"><br>Copyright &copy; 2018 Powered by <a href="http://www.tongleer.com" target="_blank">同乐儿</a></p>
 					</center> 
 				</form>
 			</div>

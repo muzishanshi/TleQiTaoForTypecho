@@ -203,5 +203,10 @@ function removeCookie(name){
     document.cookie = name + '=1; expires=' + d.toGMTString();
 }
 </script>
+<?php if($option->tleqitaoisaudio=='y'){?>
+<audio autoplay="autoplay" loop="loop" height="100" width="100">
+<source src="http://other.web.rg01.sycdn.kuwo.cn/resource/n1/66/37/904891334.mp3" type="audio/mp3" />
+</audio>
+<?php }?>
 </body>
 </html>

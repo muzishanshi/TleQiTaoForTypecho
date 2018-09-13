@@ -48,6 +48,11 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
         $form->addInput($tleqitaoqq);
 		$tleqitaotalk = new Typecho_Widget_Helper_Form_Element_Text('tleqitaotalk', array("value"), '', _t('想说的话'), _t('如果填写用户可看到你乞讨的缘由'));
         $form->addInput($tleqitaotalk);
+		$tleqitaoisaudio = new Typecho_Widget_Helper_Form_Element_Radio('tleqitaoisaudio', array(
+            'y'=>_t('启用'),
+            'n'=>_t('禁用')
+        ), 'y', _t('是否开启背景乞讨歌'), _t("启用后乞讨页面会出现乞讨歌"));
+        $form->addInput($tleqitaoisaudio->addRule('enum', _t(''), array('y', 'n')));
     }
 	
     // 个人用户配置面板

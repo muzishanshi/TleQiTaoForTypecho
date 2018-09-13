@@ -78,7 +78,7 @@ date_default_timezone_set('Asia/Shanghai');
 			</div>
 		</div>
 		<?php
-		$query= $this->db->select()->from('table.tleqitao_item')->order('instime',Typecho_Db::SORT_DESC);
+		$query= $this->db->select()->from('table.tleqitao_item')->order('instime',Typecho_Db::SORT_DESC)->offset(0)->limit(10);
 		$rows = $this->db->fetchAll($query);
 		if(count($rows)>0){
 		?>
@@ -136,6 +136,45 @@ date_default_timezone_set('Asia/Shanghai');
 					</tbody>
 				</table>
 			</div>
+		</div>
+		<?php
+		$sumTodayQuery= $this->db->select('count(*) as total')->from('table.tleqitao_item')->where('status=?','y')->where('DATEDIFF(now(),instime)=?',0);
+		$sumTodayRow = $this->db->fetchRow($sumTodayQuery);
+		$totalTodayQuery= $this->db->select('sum(Money) as total')->from('table.tleqitao_item')->where('status=?','y')->where('DATEDIFF(now(),instime)=?',0);
+		$totalTodayRow = $this->db->fetchRow($totalTodayQuery);
+		
+		$sumYesterdayQuery= $this->db->select('count(*) as total')->from('table.tleqitao_item')->where('status=?','y')->where('DATEDIFF(now(),instime)=?',1);
+		$sumYesterdayRow = $this->db->fetchRow($sumYesterdayQuery);
+		$totalYesterdayQuery= $this->db->select('sum(Money) as total')->from('table.tleqitao_item')->where('status=?','y')->where('DATEDIFF(now(),instime)=?',1);
+		$totalYesterdayRow = $this->db->fetchRow($totalYesterdayQuery);
+		
+		$sumQuery= $this->db->select('count(*) as total')->from('table.tleqitao_item')->where('status=?','y');
+		$sumRow = $this->db->fetchRow($sumQuery);
+		$totalQuery= $this->db->select('sum(Money) as total')->from('table.tleqitao_item')->where('status=?','y');
+		$totalRow = $this->db->fetchRow($totalQuery);
+		?>
+		<div class="panel panel-info">
+			<div class="panel-heading" style="background: linear-gradient(to right,#14b7ff,#5ccdde,#b221ff);">
+				<center><font color="#000000"><b>站点日志</b></font></center>
+			</div>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td align="center"><font color="#808080"><b>今日施舍总数</b></br><code><?=$sumTodayRow['total'];?></code></br>次</font></td>
+						<td align="center"><font color="#808080"><b>今日施舍金额</b></br><code><?=$totalTodayRow['total']!=''?$totalTodayRow['total']:0;?></code></br>元</font></td>
+					</tr>
+					<tr>
+						<td align="center"><font color="#808080"><b>昨日施舍总数</b></br><code><?=$sumYesterdayRow['total'];?></code></br>次</font></td>
+						<td align="center"><font color="#808080"><b>昨日施舍金额</b></br><code><?=$totalYesterdayRow['total']!=''?$totalYesterdayRow['total']:0;?></code></br>元</font>
+					</td>
+					</tr>
+					<tr height=50>
+						<td align="center"><font color="#808080"><b>累计施舍总数</b></br><code><?=$sumRow['total'];?></code></br>次</font></td>
+						<td align="center"><font color="#808080"><b>累计施舍金额</b></br><code><?=$totalRow['total']!=''?$totalRow['total']:0;?></code></br>元</font>
+					</td>
+					</tr>
+				<tbody>
+			</table>
 		</div>
 		<?php
 		}

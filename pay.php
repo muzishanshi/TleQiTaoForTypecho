@@ -48,7 +48,7 @@ switch($Request['payChannel']){
 	case "qqpay":
 	case "bank_pc":
 		echo '
-			<script src="https://apps.bdimg.com/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+			<script src="'.$plug_url.'/TleQiTao/js/jquery-3.2.1.js" type="text/javascript"></script>
 			<link rel="alternate icon" type="image/png" href="http://www.tongleer.com/wp-content/themes/D8/img/favicon.png">
 			<form id="orderform" method="post" action="https://pay.ispay.cn/core/api/request/pay/">
 				<input type="hidden" name="payChannel" value="'.$Request['payChannel'].'" />

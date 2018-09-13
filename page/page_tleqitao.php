@@ -66,7 +66,7 @@ date_default_timezone_set('Asia/Shanghai');
 							<center>
 							<div class="btn-group btn-group-justified" role="group" aria-label="...">
 								<div id="submit" class="alert alert-warning">
-									<!--选择一种方式后进行施舍...-->确定施舍...-
+									<!--选择一种方式后进行施舍...-->确定施舍...
 									<span id="msg"></span>
 								</div>
 							</div>
@@ -179,6 +179,7 @@ date_default_timezone_set('Asia/Shanghai');
 		<?php
 		}
 		?>
+		<p style="text-align:center"><br>&copy; 2018 <a href="http://www.tongleer.com" target="_blank">同乐儿</a> and <a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
 	</div>
 </div>
 <script>

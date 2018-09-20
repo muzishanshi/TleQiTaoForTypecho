@@ -45,16 +45,16 @@ date_default_timezone_set('Asia/Shanghai');
 				<form id=payform action="<?=$plug_url;?>/TleQiTao/pay.php" method=post target="_blank">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-shopping-cart"></span> 施舍留言</span>
-						<input type="text" maxLength="8" name="attachData" value="好心人施舍" class="form-control" required="required" placeholder="想要对我说些啥" />
+						<input type="text" maxLength="8" id="attachData" name="attachData" value="好心人施舍" class="form-control" required="required" placeholder="想要对我说些啥" />
 					</div>
 					<br/>
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-yen"></span> 施舍金额</span>
-						<input type="text" id="Money" name="Money" value="1" class="form-control" required="required" placeholder="施舍金额（元）" oninput="if(value.length>3)value=value.slice(0,3)"/>
+						<input type="text" id="Money" name="Money" value="1" class="form-control" required="required" placeholder="施舍金额（元）" oninput="if(value.length>4)value=value.slice(0,4)"/>
 					</div>        			
 					<br/> 
 					<center>
-						<div class="btn-group btn-group-justified" role="group" aria-label="...">
+						<div style="display:none;" class="btn-group btn-group-justified" role="group" aria-label="...">
 							<div class="btn-group" role="group">
 								<button type="button" id="type_alipay" value="<?=@$_GET['payChannel'];?>" class="btn btn-primary"><font color="#ffffff"><b>支付宝</b></font></button>
 							</div>
@@ -62,10 +62,11 @@ date_default_timezone_set('Asia/Shanghai');
 						</div>
 						<input type="hidden" name="payChannel" value="<?php if(@$_GET['payChannel']==''){?>alipay<?php }else{echo @$_GET['payChannel'];}?>" />
 						<input type="hidden" name="returnurl" value="<?=$url;?>" />
+						<input type="hidden" name="action" value="submitispay" />
 						<p>
 							<center>
 							<div class="btn-group btn-group-justified" role="group" aria-label="...">
-								<div id="submit" class="alert alert-warning">
+								<div id="submit" class="btn btn-primary">
 									<!--选择一种方式后进行施舍...-->确定施舍...
 									<span id="msg"></span>
 								</div>
@@ -100,12 +101,16 @@ date_default_timezone_set('Asia/Shanghai');
 						<td><?=$value['orderNumber'];?></td>
 						<td>
 							<?php
-							if($value['payChannel']=='alipay'){
+							if($value['payChannel']=='alipay'||$value['payChannel']=='ALIPAY'){
 								echo '支付宝';
 							}else if($value['payChannel']=='qqpay'){
 								echo 'QQ钱包';
 							}else if($value['payChannel']=='bank_pc'){
 								echo '网银';
+							}else if($value['payChannel']=='WEIXIN_DAIXIAO'){
+								echo '微信';
+							}else{
+								echo '其他';
 							}
 							?>
 						</td>
@@ -178,10 +183,19 @@ date_default_timezone_set('Asia/Shanghai');
 		<?php
 		}
 		?>
-		<p style="text-align:center"><br>&copy; 2018 <a href="http://www.tongleer.com" target="_blank">同乐儿</a> and <a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
+		<p style="text-align:center"><br>&copy; 2018 后端:<a href="http://www.tongleer.com" target="_blank">同乐儿</a> and 前端:<a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
 	</div>
 </div>
+<script src="https://cdn.bootcss.com/layer/3.1.0/layer.js"></script>
 <script>
+//随机金额
+function randomData(){
+   var moneys=[[0.66,'66大顺'],[0.88,'恭喜发财'],[1.1,'一生一世'],[2.33,'笑看人生'],[3.14,'数学之美'],[5.20,'爱你哟'],[6.66,'真的很6']];
+   var value = moneys[Math.round(Math.random()*(moneys.length-1))];
+   $('#attachData').val(value[1]);
+   $('#Money').val(value[0]);
+}
+randomData();
 /*限制键盘只能按数字键、小键盘数字键、退格键*/
 $("#Money").keyup(function(){
 	$("#Money").val($("#Money").val().replace(/[^\d.]/g,""));
@@ -205,14 +219,72 @@ $("#submit").click(function(){
 	if($("#Money").val()==''||$("#Money").val()==0){
 		return;
 	}
+	var Money = $("#Money").val();
+	var str = "老板，谢谢打赏<br>打赏金额：￥"+Money;
+	layer.confirm(str, {
+		btn: ['我要打赏','不打赏了']
+	}, function(){
+		var ii = layer.load(2, {shade:[0.1,'#fff']});
+		$.ajax({
+			type : "POST",
+			url : "<?php echo $plug_url.'/TleQiTao/pay.php';?>",
+			data : {"action":"submityouzan","Money":$("#Money").val(),"attachData":$("#attachData").val()},
+			dataType : 'json',
+			success : function(data) {
+				layer.close(ii);
+				if(data.type=="youzan"){
+					str="<center>微信/支付宝扫码支付<br /><img src='"+data.qr_code+"'><br /><a href='"+data.qr_url+"' target='_blank'>跳转支付链接</a></center>";
+				}else if(data.type=="ispay"){
+					str="前往支付宝扫码支付";
+					var nowtime = Date.parse(new Date()); 
+					setCookie('paytime',nowtime,24);
+					$("#payform").submit();
+				}
+				layer.confirm(str, {
+					btn: ['已打赏','后悔了']
+				},function(index){
+					window.location.reload();
+					layer.close(index);
+				});
+			},error:function(data){
+				layer.close(ii);
+				layer.msg('服务器错误');
+				return false;
+			}
+		});
+	}, function(){
+		layer.msg('老板行行好吧....我已经3天没吃饭了', {
+			time: 5000,/*20s后自动关闭*/
+			btn: ['再考虑一下~']
+		});
+	});
+	/*
+	$.post("<?=$plug_url.'/TleQiTao/pay.php';?>",{action:"submityouzan",Money:$("#Money").val(),attachData:$("#attachData").val()},function(data){
+		var arr=JSON.parse(data);
+		if(arr.type=="youzan"){
+			
+		}else if(arr.type=="ispay"){
+			var nowtime = Date.parse(new Date()); 
+			setCookie('paytime',nowtime,24);
+			$("#payform").submit();
+		}
+	});
+	*/
 	if($("#type_alipay").val()=='alipay'||$("#type_alipay").val()==''){
-		var nowtime = Date.parse(new Date()); 
-		setCookie('paytime',nowtime,24);
-		$("#payform").submit();
+		
 	}
 });
 </script>
 <script>
+/*对象转数组*/
+function objToArray(array) {
+    var arr = []
+    for (var i in array) {
+        arr.push(array[i]); 
+    }
+    console.log(arr);
+    return arr;
+}
 /*Cookie操作*/
 function clearCookie(){ 
 	var keys=document.cookie.match(/[^ =;]+(?=\=)/g); 

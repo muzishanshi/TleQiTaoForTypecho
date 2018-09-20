@@ -1,11 +1,11 @@
 <?php
 /**
- * TleQiTao是一个简易的乞讨Typecho插件
+ * TleQiTao是一个全自动24小时在线乞讨Typecho插件，进入插件设置可检测版本更新。<a href="https://github.com/muzishanshi/TleQiTaoForTypecho" target="_blank">Github地址</a>
  * @package TleQiTao For Typecho
  * @author 二呆
- * @version 1.0.1
+ * @version 1.0.2
  * @link http://www.tongleer.com/
- * @date 2018-09-13
+ * @date 2018-09-21
  */
 
 class TleQiTao_Plugin implements Typecho_Plugin_Interface{
@@ -18,7 +18,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 		self::funWriteThemePage($db,'page_tleqitao.php');
 		//如果数据表没有添加页面就插入
 		self::funWriteDataPage($db,'乞讨','tleqitao','page_tleqitao.php','publish');
-        return _t('插件已经激活，需先配置微博图床的信息！');
+        return _t('插件已经激活，需先配置乞讨信息！');
     }
 
     // 禁用插件
@@ -34,15 +34,43 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
     // 插件配置面板
     public static function config(Typecho_Widget_Helper_Form $form){
 		//版本检查
-		$version=file_get_contents('http://api.tongleer.com/interface/TleQiTao.php?action=update&version=1');
+		$version=file_get_contents('http://api.tongleer.com/interface/TleQiTao.php?action=update&version=2');
 		$headDiv=new Typecho_Widget_Helper_Layout();
 		$headDiv->html('版本检查：'.$version);
 		$headDiv->render();
 		
+		$tleqitaopaytype = new Typecho_Widget_Helper_Form_Element_Radio('tleqitaopaytype', array(
+            'ispay'=>_t('ispay'),
+            'youzan'=>_t('有赞')
+        ), 'youzan', _t('有赞'), _t("支付渠道"));
+        $form->addInput($tleqitaopaytype->addRule('enum', _t(''), array('ispay', 'youzan')));
+		
         $tleqitaoispayid = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoispayid', null, '', _t('ispayid'), _t('在<a href="https://www.ispay.cn/" target="_blank">ispay官网</a>注册的payId'));
-        $form->addInput($tleqitaoispayid->addRule('required', _t('ispayid不能为空！')));
+        $form->addInput($tleqitaoispayid);
 		$tleqitaoispaykey = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoispaykey', null, '', _t('ispaykey'), _t('在<a href="https://www.ispay.cn/" target="_blank">ispay官网</a>注册的payKey'));
-        $form->addInput($tleqitaoispaykey->addRule('required', _t('ispayid不能为空！')));
+        $form->addInput($tleqitaoispaykey);
+		
+		$tleqitaoyz_client_id = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_client_id', null, '', _t('有赞client_id'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的client_id'));
+        $form->addInput($tleqitaoyz_client_id);
+		$tleqitaoyz_client_secret = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_client_secret', null, '', _t('有赞client_secret'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的client_secret'));
+        $form->addInput($tleqitaoyz_client_secret);
+		$tleqitaoyz_shop_id = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_shop_id', null, '', _t('有赞授权店铺id'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的授权店铺id'));
+        $form->addInput($tleqitaoyz_shop_id);
+		$tleqitaoyz_redirect_url = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_redirect_url', null, '', _t('有赞消息推送网址'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的消息推送网址'));
+        $form->addInput($tleqitaoyz_redirect_url);
+		
+		$tleqitaoqrcodetype = new Typecho_Widget_Helper_Form_Element_Radio('tleqitaoqrcodetype', array(
+            'QR_TYPE_FIXED_BY_PERSON'=>_t('无金额'),
+            'QR_TYPE_NOLIMIT'=>_t('固定金额且可以重复支付'),
+			'QR_TYPE_DYNAMIC'=>_t('固定金额且只可支付一次')
+        ), 'QR_TYPE_DYNAMIC', _t('固定金额且只可支付一次'), _t("支付二维码种类"));
+        $form->addInput($tleqitaoqrcodetype->addRule('enum', _t(''), array('QR_TYPE_FIXED_BY_PERSON', 'QR_TYPE_NOLIMIT', 'QR_TYPE_DYNAMIC')));
+		
+		$tleqitaoshoptype = new Typecho_Widget_Helper_Form_Element_Radio('tleqitaoshoptype', array(
+            'oauth'=>_t('工具型'),
+            'self'=>_t('自用型')
+        ), 'self', _t('自用型'), _t("店铺应用种类"));
+        $form->addInput($tleqitaoshoptype->addRule('enum', _t(''), array('oauth', 'self')));
 		
 		$tleqitaoqq = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoqq', array("value"), '2293338477', _t('QQ号'), _t('通过QQ号自动获取头像地址和联系QQ链接'));
         $form->addInput($tleqitaoqq);
@@ -71,7 +99,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 		$db->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'tleqitao_item` (
 		  `orderNumber` varchar(125) COLLATE utf8_bin NOT NULL,
 		  `payChannel` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-		  `Money` int(11) DEFAULT NULL,
+		  `Money` double(10,2) DEFAULT NULL,
 		  `attachData` varchar(255) COLLATE utf8_bin DEFAULT NULL,
 		  `status` enum("y","n") COLLATE utf8_bin DEFAULT "n",
 		  `instime` datetime DEFAULT NULL,

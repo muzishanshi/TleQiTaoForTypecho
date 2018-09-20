@@ -22,4 +22,5 @@ QQ群：770956878<br />
 Github：https://github.com/muzishanshi/TleQiTaoForTypecho
 
 #### 更新记录：
+2018-09-21 新增有赞支付
 2018-09-13 第一版本实现

@@ -26,8 +26,6 @@ date_default_timezone_set('Asia/Shanghai');
 <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://css.letvcdn.com/lc04_yinyue/201612/19/20/00/bootstrap.min.css">
 <link rel="alternate icon" type="image/png" href="http://www.tongleer.com/wp-content/themes/D8/img/favicon.png">
-<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <body background="https://ww2.sinaimg.cn/large/a15b4afegy1fpp139ax3wj200o00g073.jpg">
 <div class="container" style="padding-top:20px;">
 	<div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
@@ -186,136 +184,139 @@ date_default_timezone_set('Asia/Shanghai');
 		<p style="text-align:center"><br>&copy; 2018 后端:<a href="http://www.tongleer.com" target="_blank">同乐儿</a> and 前端:<a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
 	</div>
 </div>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://cdn.bootcss.com/layer/3.1.0/layer.js"></script>
 <script>
-//随机金额
-function randomData(){
-   var moneys=[[0.66,'66大顺'],[0.88,'恭喜发财'],[1.1,'一生一世'],[2.33,'笑看人生'],[3.14,'数学之美'],[5.20,'爱你哟'],[6.66,'真的很6']];
-   var value = moneys[Math.round(Math.random()*(moneys.length-1))];
-   $('#attachData').val(value[1]);
-   $('#Money').val(value[0]);
-}
-randomData();
-/*限制键盘只能按数字键、小键盘数字键、退格键*/
-$("#Money").keyup(function(){
-	$("#Money").val($("#Money").val().replace(/[^\d.]/g,""));
-	$("#Money").val($("#Money").val().replace(/\.{2,}/g,"."));
-	$("#Money").val($("#Money").val().replace(/^\./g,""));
-	$("#Money").val($("#Money").val().replace(".","$#$").replace(/\./g,"").replace("$#$","."));
-	$("#Money").val($("#Money").val().replace(/^(\-)*(\d+)\.(\d\d).*$/,"$1$2.$3"));
-});
-$("#submit").click(function(){
-	var timer;
-	var oldtime = getCookie('paytime');
-	var nowtime = Date.parse(new Date()); 
-	if((nowtime-oldtime)/1000<=10){
-		$("#msg").html('<font color="red">施舍太快，我会脸红的^_^</font>');
-		timer=setTimeout(function() { 
-			clearTimeout(timer);
-			$("#msg").html('');
-		},1000) 
-		return;
+$(function(){
+	//随机金额
+	function randomData(){
+	   var moneys=[[0.66,'66大顺'],[0.88,'恭喜发财'],[1.1,'一生一世'],[2.33,'笑看人生'],[3.14,'数学之美'],[5.20,'爱你哟'],[6.66,'真的很6']];
+	   var value = moneys[Math.round(Math.random()*(moneys.length-1))];
+	   $('#attachData').val(value[1]);
+	   $('#Money').val(value[0]);
 	}
-	if($("#Money").val()==''||$("#Money").val()==0){
-		return;
-	}
-	var Money = $("#Money").val();
-	var str = "老板，谢谢打赏<br>打赏金额：￥"+Money;
-	layer.confirm(str, {
-		btn: ['我要打赏','不打赏了']
-	}, function(){
-		var ii = layer.load(2, {shade:[0.1,'#fff']});
-		$.ajax({
-			type : "POST",
-			url : "<?php echo $plug_url.'/TleQiTao/pay.php';?>",
-			data : {"action":"submityouzan","Money":$("#Money").val(),"attachData":$("#attachData").val()},
-			dataType : 'json',
-			success : function(data) {
-				layer.close(ii);
-				if(data.type=="youzan"){
-					str="<center>微信/支付宝扫码支付<br /><img src='"+data.qr_code+"'><br /><a href='"+data.qr_url+"' target='_blank'>跳转支付链接</a></center>";
-				}else if(data.type=="ispay"){
-					str="前往支付宝扫码支付";
-					var nowtime = Date.parse(new Date()); 
-					setCookie('paytime',nowtime,24);
-					$("#payform").submit();
+	randomData();
+	/*限制键盘只能按数字键、小键盘数字键、退格键*/
+	$("#Money").keyup(function(){
+		$("#Money").val($("#Money").val().replace(/[^\d.]/g,""));
+		$("#Money").val($("#Money").val().replace(/\.{2,}/g,"."));
+		$("#Money").val($("#Money").val().replace(/^\./g,""));
+		$("#Money").val($("#Money").val().replace(".","$#$").replace(/\./g,"").replace("$#$","."));
+		$("#Money").val($("#Money").val().replace(/^(\-)*(\d+)\.(\d\d).*$/,"$1$2.$3"));
+	});
+	$("#submit").click(function(){
+		var timer;
+		var oldtime = getCookie('paytime');
+		var nowtime = Date.parse(new Date()); 
+		if((nowtime-oldtime)/1000<=10){
+			$("#msg").html('<font color="red">施舍太快，我会脸红的^_^</font>');
+			timer=setTimeout(function() { 
+				clearTimeout(timer);
+				$("#msg").html('');
+			},1000) 
+			return;
+		}
+		if($("#Money").val()==''||$("#Money").val()==0){
+			return;
+		}
+		var Money = $("#Money").val();
+		var str = "老板，谢谢打赏<br>打赏金额：￥"+Money;
+		layer.confirm(str, {
+			btn: ['我要打赏','不打赏了']
+		}, function(){
+			var ii = layer.load(2, {shade:[0.1,'#fff']});
+			$.ajax({
+				type : "POST",
+				url : "<?php echo $plug_url.'/TleQiTao/pay.php';?>",
+				data : {"action":"submityouzan","Money":$("#Money").val(),"attachData":$("#attachData").val()},
+				dataType : 'json',
+				success : function(data) {
+					layer.close(ii);
+					if(data.type=="youzan"){
+						str="<center>微信/支付宝扫码支付<br /><img src='"+data.qr_code+"'><br /><a href='"+data.qr_url+"' target='_blank'>跳转支付链接</a></center>";
+					}else if(data.type=="ispay"){
+						str="前往支付宝扫码支付";
+						var nowtime = Date.parse(new Date()); 
+						setCookie('paytime',nowtime,24);
+						$("#payform").submit();
+					}
+					layer.confirm(str, {
+						btn: ['已打赏','后悔了']
+					},function(index){
+						window.location.reload();
+						layer.close(index);
+					});
+				},error:function(data){
+					layer.close(ii);
+					layer.msg('服务器错误');
+					return false;
 				}
-				layer.confirm(str, {
-					btn: ['已打赏','后悔了']
-				},function(index){
-					window.location.reload();
-					layer.close(index);
-				});
-			},error:function(data){
-				layer.close(ii);
-				layer.msg('服务器错误');
-				return false;
+			});
+		}, function(){
+			layer.msg('老板行行好吧....我已经3天没吃饭了', {
+				time: 5000,/*20s后自动关闭*/
+				btn: ['再考虑一下~']
+			});
+		});
+		/*
+		$.post("<?=$plug_url.'/TleQiTao/pay.php';?>",{action:"submityouzan",Money:$("#Money").val(),attachData:$("#attachData").val()},function(data){
+			var arr=JSON.parse(data);
+			if(arr.type=="youzan"){
+				
+			}else if(arr.type=="ispay"){
+				var nowtime = Date.parse(new Date()); 
+				setCookie('paytime',nowtime,24);
+				$("#payform").submit();
 			}
 		});
-	}, function(){
-		layer.msg('老板行行好吧....我已经3天没吃饭了', {
-			time: 5000,/*20s后自动关闭*/
-			btn: ['再考虑一下~']
-		});
-	});
-	/*
-	$.post("<?=$plug_url.'/TleQiTao/pay.php';?>",{action:"submityouzan",Money:$("#Money").val(),attachData:$("#attachData").val()},function(data){
-		var arr=JSON.parse(data);
-		if(arr.type=="youzan"){
+		*/
+		if($("#type_alipay").val()=='alipay'||$("#type_alipay").val()==''){
 			
-		}else if(arr.type=="ispay"){
-			var nowtime = Date.parse(new Date()); 
-			setCookie('paytime',nowtime,24);
-			$("#payform").submit();
 		}
 	});
-	*/
-	if($("#type_alipay").val()=='alipay'||$("#type_alipay").val()==''){
-		
+	/*对象转数组*/
+	function objToArray(array) {
+		var arr = []
+		for (var i in array) {
+			arr.push(array[i]); 
+		}
+		console.log(arr);
+		return arr;
 	}
+	/*Cookie操作*/
+	function clearCookie(){ 
+		var keys=document.cookie.match(/[^ =;]+(?=\=)/g); 
+		if (keys) { 
+			for (var i = keys.length; i--;) 
+			document.cookie=keys[i]+'=0;expires=' + new Date( 0).toUTCString() 
+		} 
+	}
+	function setCookie(name,value,hours){  
+		var d = new Date();
+		d.setTime(d.getTime() + hours * 3600 * 1000);
+		document.cookie = name + '=' + value + '; expires=' + d.toGMTString();
+	}
+	function getCookie(name){  
+		var arr = document.cookie.split('; ');
+		for(var i = 0; i < arr.length; i++){
+			var temp = arr[i].split('=');
+			if(temp[0] == name){
+				return temp[1];
+			}
+		}
+		return '';
+	}
+	function removeCookie(name){
+		var d = new Date();
+		d.setTime(d.getTime() - 10000);
+		document.cookie = name + '=1; expires=' + d.toGMTString();
+	}
+	$('#bgAudio')[0].volume = 0.01;
 });
 </script>
-<script>
-/*对象转数组*/
-function objToArray(array) {
-    var arr = []
-    for (var i in array) {
-        arr.push(array[i]); 
-    }
-    console.log(arr);
-    return arr;
-}
-/*Cookie操作*/
-function clearCookie(){ 
-	var keys=document.cookie.match(/[^ =;]+(?=\=)/g); 
-	if (keys) { 
-		for (var i = keys.length; i--;) 
-		document.cookie=keys[i]+'=0;expires=' + new Date( 0).toUTCString() 
-	} 
-}
-function setCookie(name,value,hours){  
-    var d = new Date();
-    d.setTime(d.getTime() + hours * 3600 * 1000);
-    document.cookie = name + '=' + value + '; expires=' + d.toGMTString();
-}
-function getCookie(name){  
-    var arr = document.cookie.split('; ');
-    for(var i = 0; i < arr.length; i++){
-        var temp = arr[i].split('=');
-        if(temp[0] == name){
-            return temp[1];
-        }
-    }
-    return '';
-}
-function removeCookie(name){
-    var d = new Date();
-    d.setTime(d.getTime() - 10000);
-    document.cookie = name + '=1; expires=' + d.toGMTString();
-}
-</script>
 <?php if($option->tleqitaoisaudio=='y'){?>
-<audio autoplay="autoplay" loop="loop" height="100" width="100">
+<audio id="bgAudio" autoplay="autoplay" loop="loop" height="100" width="100">
 <source src="http://other.web.rg01.sycdn.kuwo.cn/resource/n1/66/37/904891334.mp3" type="audio/mp3" />
 </audio>
 <?php }?>

@@ -33,6 +33,8 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 
     // 插件配置面板
     public static function config(Typecho_Widget_Helper_Form $form){
+		$options = Typecho_Widget::widget('Widget_Options');
+		$plug_url = $options->pluginUrl;
 		//版本检查
 		$version=file_get_contents('http://api.tongleer.com/interface/TleQiTao.php?action=update&version=2');
 		$headDiv=new Typecho_Widget_Helper_Layout();
@@ -56,7 +58,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
         $form->addInput($tleqitaoyz_client_secret);
 		$tleqitaoyz_shop_id = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_shop_id', null, '', _t('有赞授权店铺id'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的授权店铺id'));
         $form->addInput($tleqitaoyz_shop_id);
-		$tleqitaoyz_redirect_url = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_redirect_url', null, '', _t('有赞消息推送网址'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的消息推送网址'));
+		$tleqitaoyz_redirect_url = new Typecho_Widget_Helper_Form_Element_Text('tleqitaoyz_redirect_url', array("value"), $plug_url.'/TleQiTao/notify_url.php', _t('有赞消息推送网址'), _t('在<a href="https://www.youzanyun.com/" target="_blank">有赞云官网</a>授权绑定有赞微小店APP的店铺后注册的消息推送网址'));
         $form->addInput($tleqitaoyz_redirect_url);
 		
 		$tleqitaoqrcodetype = new Typecho_Widget_Helper_Form_Element_Radio('tleqitaoqrcodetype', array(

@@ -7,7 +7,7 @@
  * @link http://www.tongleer.com/
  * @date 2018-09-21
  */
-
+date_default_timezone_set('Asia/Shanghai');
 class TleQiTao_Plugin implements Typecho_Plugin_Interface{
     // 激活插件
     public static function activate(){
@@ -36,7 +36,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 		$options = Typecho_Widget::widget('Widget_Options');
 		$plug_url = $options->pluginUrl;
 		//版本检查
-		$version=file_get_contents('http://api.tongleer.com/interface/TleQiTao.php?action=update&version=2');
+		$version=file_get_contents('https://tongleer.com/api/interface/TleQiTao.php?action=update&version=2');
 		$headDiv=new Typecho_Widget_Helper_Layout();
 		$headDiv->html('版本检查：'.$version);
 		$headDiv->render();
@@ -99,14 +99,14 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 		$prefix = $db->getPrefix();
 		//$db->query('DROP TABLE IF EXISTS '.$prefix.'weibofile_videoupload');
 		$db->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'tleqitao_item` (
-		  `orderNumber` varchar(125) COLLATE utf8_bin NOT NULL,
-		  `payChannel` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+		  `orderNumber` varchar(125) COLLATE utf8_general_ci NOT NULL,
+		  `payChannel` varchar(255) COLLATE utf8_general_ci DEFAULT NULL,
 		  `Money` double(10,2) DEFAULT NULL,
-		  `attachData` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-		  `status` enum("y","n") COLLATE utf8_bin DEFAULT "n",
+		  `attachData` varchar(255) COLLATE utf8_general_ci DEFAULT NULL,
+		  `status` enum("y","n") COLLATE utf8_general_ci DEFAULT "n",
 		  `instime` datetime DEFAULT NULL,
 		  PRIMARY KEY (`orderNumber`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
+		) DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;');
 	}
 	
 	/*公共方法：将页面写入数据库*/
@@ -117,7 +117,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 			$contents = array(
 				'title'      =>  $title,
 				'slug'      =>  $slug,
-				'created'   =>  Typecho_Date::time(),
+				'created'   =>  date('Y-m-d H:i:s',time()),
 				'text'=>  '<!--markdown-->',
 				'password'  =>  '',
 				'authorId'     =>  Typecho_Cookie::get('__typecho_uid'),

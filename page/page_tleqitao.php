@@ -25,7 +25,7 @@ date_default_timezone_set('Asia/Shanghai');
 <meta name="viewport" content="width=device-width, initial-scale=0.9">
 <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://css.letvcdn.com/lc04_yinyue/201612/19/20/00/bootstrap.min.css">
-<link rel="alternate icon" type="image/png" href="http://www.tongleer.com/wp-content/themes/D8/img/favicon.png">
+<link rel="alternate icon" type="image/png" href="https://ws3.sinaimg.cn/large/ecabade5ly1fxpiemcap1j200s00s744.jpg">
 <body background="https://ww2.sinaimg.cn/large/a15b4afegy1fpp139ax3wj200o00g073.jpg">
 <div class="container" style="padding-top:20px;">
 	<div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
@@ -36,7 +36,7 @@ date_default_timezone_set('Asia/Shanghai');
 			<div class="panel-body">
 				<center>
 					<div class="alert alert-success">
-						<a href="http://wpa.qq.com/msgrd?v=3&uin=<?=$option->tleqitaoqq;?>&site=qq&menu=yes" target="_blank"><img class="img-circle m-b-xs" style="border: 2px solid #1281FF; margin-left:3px; margin-right:3px;" src="https://q4.qlogo.cn/headimg_dl?dst_uin=<?=$option->tleqitaoqq;?>&spec=100"; width="60px" height="60px" alt="全天24小时要饭"><br></a>
+						<a href="https://wpa.qq.com/msgrd?v=3&uin=<?=$option->tleqitaoqq;?>&site=qq&menu=yes" target="_blank"><img class="img-circle m-b-xs" style="border: 2px solid #1281FF; margin-left:3px; margin-right:3px;" src="https://q4.qlogo.cn/headimg_dl?dst_uin=<?=$option->tleqitaoqq;?>&spec=100"; width="60px" height="60px" alt="全天24小时要饭"><br></a>
 						<?=$option->tleqitaotalk;?>
 					</div>
 				</center>

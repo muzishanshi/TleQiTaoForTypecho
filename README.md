@@ -17,7 +17,6 @@ TleQiTao是一个简易的乞讨Typecho插件
 
 #### 与我联系：
 作者：二呆<br />
-QQ群：770956878<br />
 网站：http://www.tongleer.com/<br />
 Github：https://github.com/muzishanshi/TleQiTaoForTypecho
 

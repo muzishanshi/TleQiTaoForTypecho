@@ -3,9 +3,9 @@
  * TleQiTao是一个全自动24小时在线乞讨Typecho插件，进入插件设置可检测版本更新。<a href="https://github.com/muzishanshi/TleQiTaoForTypecho" target="_blank">Github地址</a>
  * @package TleQiTao For Typecho
  * @author 二呆
- * @version 1.0.2
+ * @version 1.0.3
  * @link http://www.tongleer.com/
- * @date 2018-09-21
+ * @date 2019-03-22
  */
 date_default_timezone_set('Asia/Shanghai');
 class TleQiTao_Plugin implements Typecho_Plugin_Interface{
@@ -36,7 +36,7 @@ class TleQiTao_Plugin implements Typecho_Plugin_Interface{
 		$options = Typecho_Widget::widget('Widget_Options');
 		$plug_url = $options->pluginUrl;
 		//版本检查
-		$version=file_get_contents('https://www.tongleer.com/api/interface/TleQiTao.php?action=update&version=2');
+		$version=file_get_contents('https://www.tongleer.com/api/interface/TleQiTao.php?action=update&version=3');
 		$headDiv=new Typecho_Widget_Helper_Layout();
 		$headDiv->html('版本检查：'.$version);
 		$headDiv->render();

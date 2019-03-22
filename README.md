@@ -1,6 +1,7 @@
 <img src="https://ws3.sinaimg.cn/large/ecabade5ly1fv7pzn9u2pj211h0mpadq.jpg">
 ### TleQiTaoForTypecho简易乞讨插件
 ---
+已过时：跳转同款打赏插件https://github.com/muzishanshi/TleDaShangForTypecho
 
 TleQiTao是一个简易的乞讨Typecho插件
 
@@ -17,9 +18,19 @@ TleQiTao是一个简易的乞讨Typecho插件
 
 #### 与我联系：
 作者：二呆<br />
+1元入群：http://joke.tongleer.com/333.html<br />
 网站：http://www.tongleer.com/<br />
 Github：https://github.com/muzishanshi/TleQiTaoForTypecho
 
 #### 更新记录：
-2018-09-21 新增有赞支付
-2018-09-13 第一版本实现
+2019-03-22
+
+	V1.0.3 修复了因cdn.bootcss.com中JS静态资源不可访问导致的js失效的问题。
+	
+2018-09-21
+
+	新增有赞支付
+
+2018-09-13
+	
+	第一版本实现

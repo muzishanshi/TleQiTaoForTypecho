@@ -23,7 +23,7 @@ date_default_timezone_set('Asia/Shanghai');
 <title>全天24小时乞讨</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.9">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/cerulean/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://css.letvcdn.com/lc04_yinyue/201612/19/20/00/bootstrap.min.css">
 <link rel="alternate icon" type="image/png" href="https://ws3.sinaimg.cn/large/ecabade5ly1fxpiemcap1j200s00s744.jpg">
 <body background="https://ww2.sinaimg.cn/large/a15b4afegy1fpp139ax3wj200o00g073.jpg">
@@ -52,20 +52,12 @@ date_default_timezone_set('Asia/Shanghai');
 					</div>        			
 					<br/> 
 					<center>
-						<div style="display:none;" class="btn-group btn-group-justified" role="group" aria-label="...">
-							<div class="btn-group" role="group">
-								<button type="button" id="type_alipay" value="<?=@$_GET['payChannel'];?>" class="btn btn-primary"><font color="#ffffff"><b>支付宝</b></font></button>
-							</div>
-							
-						</div>
-						<input type="hidden" name="payChannel" value="<?php if(@$_GET['payChannel']==''){?>alipay<?php }else{echo @$_GET['payChannel'];}?>" />
-						<input type="hidden" name="returnurl" value="<?=$url;?>" />
-						<input type="hidden" name="action" value="submitispay" />
+						<input type="hidden" name="action" value="submit" />
 						<p>
 							<center>
 							<div class="btn-group btn-group-justified" role="group" aria-label="...">
 								<div id="submit" class="btn btn-primary">
-									<!--选择一种方式后进行施舍...-->确定施舍...
+									确定施舍...
 									<span id="msg"></span>
 								</div>
 							</div>
@@ -99,13 +91,7 @@ date_default_timezone_set('Asia/Shanghai');
 						<td><?=$value['orderNumber'];?></td>
 						<td>
 							<?php
-							if($value['payChannel']=='alipay'||$value['payChannel']=='ALIPAY'){
-								echo '支付宝';
-							}else if($value['payChannel']=='qqpay'){
-								echo 'QQ钱包';
-							}else if($value['payChannel']=='bank_pc'){
-								echo '网银';
-							}else if($value['payChannel']=='WEIXIN_DAIXIAO'){
+							if($value['payChannel']=='wx'){
 								echo '微信';
 							}else{
 								echo '其他';
@@ -181,7 +167,7 @@ date_default_timezone_set('Asia/Shanghai');
 		<?php
 		}
 		?>
-		<p style="text-align:center"><br>&copy; 2018 后端:<a href="http://www.tongleer.com" target="_blank">同乐儿</a> and 前端:<a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
+		<p style="text-align:center"><br>&copy; <?=date("Y");?> 后端:<a href="https://me.tongleer.com/qitao" target="_blank">二呆</a> and 前端:<a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
 	</div>
 </div>
 <script src="https://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
@@ -229,17 +215,14 @@ $(function(){
 			$.ajax({
 				type : "POST",
 				url : "<?php echo $plug_url.'/TleQiTao/pay.php';?>",
-				data : {"action":"submityouzan","Money":$("#Money").val(),"attachData":$("#attachData").val()},
+				data : {"action":"submit","Money":$("#Money").val(),"attachData":$("#attachData").val()},
 				dataType : 'json',
 				success : function(data) {
 					layer.close(ii);
-					if(data.type=="youzan"){
-						str="<center>微信/支付宝扫码支付<br /><img src='"+data.qr_code+"'><br /><a href='"+data.qr_url+"' target='_blank'>跳转支付链接</a></center>";
-					}else if(data.type=="ispay"){
-						str="前往支付宝扫码支付";
+					if(data.status=="ok"){
+						str="<center><div>支持微信付款</div><div><img src='"+data.qrcode+"' width='200' /></div></center>";
 						var nowtime = Date.parse(new Date()); 
 						setCookie('paytime',nowtime,24);
-						$("#payform").submit();
 					}
 					layer.confirm(str, {
 						btn: ['已打赏','后悔了']
@@ -259,21 +242,6 @@ $(function(){
 				btn: ['再考虑一下~']
 			});
 		});
-		/*
-		$.post("<?=$plug_url.'/TleQiTao/pay.php';?>",{action:"submityouzan",Money:$("#Money").val(),attachData:$("#attachData").val()},function(data){
-			var arr=JSON.parse(data);
-			if(arr.type=="youzan"){
-				
-			}else if(arr.type=="ispay"){
-				var nowtime = Date.parse(new Date()); 
-				setCookie('paytime',nowtime,24);
-				$("#payform").submit();
-			}
-		});
-		*/
-		if($("#type_alipay").val()=='alipay'||$("#type_alipay").val()==''){
-			
-		}
 	});
 	/*对象转数组*/
 	function objToArray(array) {

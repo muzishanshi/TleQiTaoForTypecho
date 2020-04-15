@@ -23,10 +23,11 @@ date_default_timezone_set('Asia/Shanghai');
 <title>全天24小时乞讨</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.9">
+<meta name="referrer" content="same-origin">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://css.letvcdn.com/lc04_yinyue/201612/19/20/00/bootstrap.min.css">
-<link rel="alternate icon" type="image/png" href="https://ws3.sinaimg.cn/large/ecabade5ly1fxpiemcap1j200s00s744.jpg">
-<body background="https://ww2.sinaimg.cn/large/a15b4afegy1fpp139ax3wj200o00g073.jpg">
+<link rel="alternate icon" type="image/png" href="https://wx3.sinaimg.cn/large/ecabade5ly1fxpiemcap1j200s00s744.jpg">
+<body background="https://wx2.sinaimg.cn/large/a15b4afegy1fpp139ax3wj200o00g073.jpg">
 <div class="container" style="padding-top:20px;">
 	<div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
 		<div class="panel panel-primary">
@@ -48,6 +49,7 @@ date_default_timezone_set('Asia/Shanghai');
 					<br/>
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-yen"></span> 施舍金额</span>
+						<input type="hidden" id="url" value="<?=$url;?>" />
 						<input type="text" id="Money" name="Money" value="1" class="form-control" required="required" placeholder="施舍金额（元）" oninput="if(value.length>4)value=value.slice(0,4)"/>
 					</div>        			
 					<br/> 
@@ -167,7 +169,7 @@ date_default_timezone_set('Asia/Shanghai');
 		<?php
 		}
 		?>
-		<p style="text-align:center"><br>&copy; <?=date("Y");?> 后端:<a href="https://me.tongleer.com/qitao" target="_blank">二呆</a> and 前端:<a href="https://www.yyhy.me/yf/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
+		<p style="text-align:center"><br>&copy; <?=date("Y");?> 后端:<a href="https://me.tongleer.com/qitao" target="_blank">二呆</a> and 前端:<a href="https://yf.yyhy.me/" target="_blank">烟雨寒云</a>. All rights reserved.</p>
 	</div>
 </div>
 <script src="https://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
@@ -212,17 +214,26 @@ $(function(){
 			btn: ['我要打赏','不打赏了']
 		}, function(){
 			var ii = layer.load(2, {shade:[0.1,'#fff']});
+			var qitao_payjstype="native";
+			if(isTleQitaoWeiXin()){
+				qitao_payjstype="cashier";
+			}
 			$.ajax({
 				type : "POST",
 				url : "<?php echo $plug_url.'/TleQiTao/pay.php';?>",
-				data : {"action":"submit","Money":$("#Money").val(),"attachData":$("#attachData").val()},
+				data : {"action":"submit","Money":$("#Money").val(),"attachData":$("#attachData").val(),"qitao_payjstype":qitao_payjstype,"url":$('#url').val()},
 				dataType : 'json',
 				success : function(data) {
 					layer.close(ii);
 					if(data.status=="ok"){
-						str="<center><div>支持微信付款</div><div><img src='"+data.qrcode+"' width='200' /></div></center>";
-						var nowtime = Date.parse(new Date()); 
-						setCookie('paytime',nowtime,24);
+						if(data.type=="native"){
+							str="<center><div>支持微信付款</div><div><img src='"+data.qrcode+"' width='200' /></div></center>";
+							var nowtime = Date.parse(new Date()); 
+							setCookie('paytime',nowtime,24);
+						}else if(data.type=="cashier"){
+							open("<?=$plug_url;?>/TleQiTao/pay.php?qitao_payjstype="+qitao_payjstype+"&Money="+$('#Money').val()+"&attachData="+$('#attachData').val()+"&url="+$('#url').val());
+							return;
+						}
 					}else{
 						str="<center><div>请求支付过程出了一点小问题，稍后重试一次吧！</div></center>";
 					}
@@ -245,6 +256,14 @@ $(function(){
 			});
 		});
 	});
+	function isTleQitaoWeiXin(){
+		var ua = window.navigator.userAgent.toLowerCase();
+		if(ua.match(/MicroMessenger/i) == "micromessenger"){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	/*对象转数组*/
 	function objToArray(array) {
 		var arr = []
@@ -282,12 +301,12 @@ $(function(){
 		d.setTime(d.getTime() - 10000);
 		document.cookie = name + '=1; expires=' + d.toGMTString();
 	}
-	$('#bgAudio')[0].volume = 0.01;
+	$('#bgAudio')[0].volume = <?=$option->tleqitaoaudiovolume;?>;
 });
 </script>
 <?php if($option->tleqitaoisaudio=='y'){?>
 <audio id="bgAudio" autoplay="autoplay" loop="loop" height="100" width="100">
-<source src="http://other.web.rg01.sycdn.kuwo.cn/resource/n1/66/37/904891334.mp3" type="audio/mp3" />
+<source src="<?=$option->tleqitaoaudiourl;?>" type="audio/mp3" />
 </audio>
 <?php }?>
 </body>

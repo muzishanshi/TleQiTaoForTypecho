@@ -25,13 +25,15 @@ TleQiTao是一个简易的乞讨Typecho插件
 #### 与我联系：
 作者：二呆
 
-1元入群：http://joke.tongleer.com/333.html
-
 网站：http://www.tongleer.com/
 
 Github：https://github.com/muzishanshi/TleQiTaoForTypecho
 
 #### 更新记录：
+2020-04-15
+
+	V1.0.5 支持了微信手机端长按二维码支付
+	
 2019-04-06
 
 	V1.0.4 集成payjs微信支付，可通过自己的微信直接到账银行卡，并简化插件。
